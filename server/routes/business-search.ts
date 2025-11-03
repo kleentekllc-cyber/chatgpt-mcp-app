@@ -175,22 +175,28 @@ router.post('/businesses', async (req: Request, res: Response) => {
     const errorMessage =
       error instanceof Error ? error.message : 'An unexpected error occurred';
 
-    // Check for specific error types
-    if (errorMessage.includes('geocode')) {
+    // Check for geocoding errors (from geocodeLocation service)
+    // Sanitize error message to avoid exposing internal API details
+    if (errorMessage.toLowerCase().includes('geocode') ||
+        errorMessage.toLowerCase().includes('google api') ||
+        errorMessage.toLowerCase().includes('location')) {
       return res.status(400).json({
         error: 'Invalid location',
-        message: errorMessage,
+        message: 'Unable to find the specified location. Please check the location and try again.',
         requestId,
       });
     }
 
+    // Check for service availability errors
     if (
-      errorMessage.includes('timeout') ||
-      errorMessage.includes('temporarily busy')
+      errorMessage.toLowerCase().includes('timeout') ||
+      errorMessage.toLowerCase().includes('temporarily') ||
+      errorMessage.toLowerCase().includes('unavailable') ||
+      errorMessage.toLowerCase().includes('busy')
     ) {
       return res.status(503).json({
         error: 'Service temporarily unavailable',
-        message: errorMessage,
+        message: 'The service is temporarily unavailable. Please try again later.',
         requestId,
       });
     }

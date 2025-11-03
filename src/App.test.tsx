@@ -22,6 +22,8 @@ vi.mock('@vis.gl/react-google-maps', () => ({
     </div>
   ),
   AdvancedMarker: () => <div data-testid="marker" />,
+  useMap: () => null,
+  InfoWindow: ({ children }: { children: React.ReactNode }) => <div data-testid="info-window">{children}</div>,
 }));
 
 describe('App Integration Tests', () => {

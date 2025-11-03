@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Map, InfoWindow } from '@vis.gl/react-google-maps';
+import { Map, InfoWindow, useMap } from '@vis.gl/react-google-maps';
 import type { MapViewProps } from '../../types/google-maps';
 import { Marker } from './Marker';
 import { BusinessMarkerData, BusinessData } from '../../types/business';
@@ -20,6 +20,22 @@ import { decodePolyline } from '../../lib/directions-api-client';
 // Default map center: San Francisco
 const DEFAULT_CENTER = { lat: 37.7749, lng: -122.4194 };
 const DEFAULT_ZOOM = 12;
+
+// Internal component to handle map instance ref
+const MapRefHandler: React.FC<{ mapRef: React.MutableRefObject<any>; onMapLoad?: (map: any) => void }> = ({ mapRef, onMapLoad }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (map) {
+      mapRef.current = map;
+      if (onMapLoad) {
+        onMapLoad(map);
+      }
+    }
+  }, [map, mapRef, onMapLoad]);
+
+  return null;
+};
 
 export const MapView: React.FC<MapViewProps> = ({
   center = DEFAULT_CENTER,
@@ -75,12 +91,6 @@ export const MapView: React.FC<MapViewProps> = ({
     }
   }, [directions.isActive, directions.routes, directions.selectedRouteIndex]);
 
-  const handleMapLoad = (map: any) => {
-    mapRef.current = map;
-    if (onMapLoad) {
-      onMapLoad(map);
-    }
-  };
 
   const handleMarkerClick = async (marker: any) => {
     // Type guard to check if marker has popup data
@@ -131,7 +141,7 @@ export const MapView: React.FC<MapViewProps> = ({
     previousMarkerRef.current = null;
   };
 
-  const handleDirections = async (placeId: string) => {
+  const handleDirections = async () => {
     const business = selectedBusinessData;
     if (business && business.location) {
       try {
@@ -197,7 +207,6 @@ export const MapView: React.FC<MapViewProps> = ({
           defaultZoom={zoom}
           gestureHandling="greedy"
           disableDefaultUI={false}
-          onLoad={handleMapLoad}
           mapId="localhub-map"
           style={{ width: '100%', height: '100%' }}
           zoomControl={true}
@@ -205,6 +214,7 @@ export const MapView: React.FC<MapViewProps> = ({
           mapTypeControl={false}
           fullscreenControl={false}
         >
+          <MapRefHandler mapRef={mapRef} onMapLoad={onMapLoad} />
           {markers.map((marker) => (
             <Marker
               key={marker.id}
@@ -220,10 +230,7 @@ export const MapView: React.FC<MapViewProps> = ({
             <Marker
               key="directions-origin"
               position={directions.userLocation.coords}
-              icon={{
-                url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iOCIgZmlsbD0iIzM0QTg1MyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIi8+PC9zdmc+',
-                scaledSize: { width: 32, height: 32 },
-              }}
+              icon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iOCIgZmlsbD0iIzM0QTg1MyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIi8+PC9zdmc+"
             />
           )}
 

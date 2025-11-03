@@ -3,11 +3,9 @@
  * Manages directions state across the application
  */
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import {
-  TravelMode,
-  Route,
-  UserLocation,
+import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { TravelMode } from '../types/directions';
+import type {
   Location,
   DirectionsState,
 } from '../types/directions';

@@ -16,7 +16,7 @@ export interface TransportModeSelectorProps {
 interface ModeOption {
   mode: TravelMode;
   label: string;
-  icon: JSX.Element;
+  icon: React.ReactElement;
   ariaLabel: string;
 }
 

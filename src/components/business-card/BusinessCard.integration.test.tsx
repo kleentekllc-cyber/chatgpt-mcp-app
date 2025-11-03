@@ -8,6 +8,7 @@ import { render, screen } from '@testing-library/react';
 import { MapView } from '../map/MapView';
 import { BusinessMarkerData } from '../../types/business';
 import * as placeDetailsApi from '../../lib/api/placeDetails';
+import { DirectionsProvider } from '../../context/DirectionsContext';
 
 // Mock the Google Maps components
 vi.mock('@vis.gl/react-google-maps', async () => {
@@ -16,6 +17,7 @@ vi.mock('@vis.gl/react-google-maps', async () => {
     InfoWindow: ({ children }: any) => <div data-testid="info-window">{children}</div>,
     AdvancedMarker: ({ children }: any) => <div data-testid="advanced-marker">{children}</div>,
     Pin: () => <div data-testid="pin" />,
+    useMap: () => null,
   };
 });
 
@@ -92,7 +94,11 @@ describe('Business Card Integration Tests', () => {
   it('should render map with markers', () => {
     vi.spyOn(placeDetailsApi, 'fetchPlaceDetails').mockResolvedValue(MOCK_BUSINESS_DATA);
 
-    render(<MapView center={{ lat: 0, lng: 0 }} zoom={12} markers={[MOCK_MARKER]} />);
+    render(
+      <DirectionsProvider>
+        <MapView center={{ lat: 0, lng: 0 }} zoom={12} markers={[MOCK_MARKER]} />
+      </DirectionsProvider>
+    );
 
     const map = screen.getByTestId('google-map');
     expect(map).toBeInTheDocument();

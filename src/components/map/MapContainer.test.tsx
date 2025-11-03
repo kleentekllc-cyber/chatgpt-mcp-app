@@ -6,6 +6,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MapContainer } from './MapContainer';
 import * as mapsApi from '../../lib/api/maps';
+import { DirectionsProvider } from '../../context/DirectionsContext';
 
 // Mock the maps API
 vi.mock('../../lib/api/maps');
@@ -15,6 +16,8 @@ vi.mock('@vis.gl/react-google-maps', () => ({
   APIProvider: ({ children }: { children: React.ReactNode }) => <div data-testid="api-provider">{children}</div>,
   Map: ({ children }: { children: React.ReactNode }) => <div data-testid="map">{children}</div>,
   AdvancedMarker: () => <div data-testid="marker" />,
+  useMap: () => null,
+  InfoWindow: ({ children }: { children: React.ReactNode }) => <div data-testid="info-window">{children}</div>,
 }));
 
 describe('MapContainer', () => {
@@ -29,7 +32,11 @@ describe('MapContainer', () => {
     );
 
     // Act
-    render(<MapContainer />);
+    render(
+      <DirectionsProvider>
+        <MapContainer />
+      </DirectionsProvider>
+    );
 
     // Assert
     expect(screen.getByRole('status')).toBeInTheDocument();
@@ -43,7 +50,11 @@ describe('MapContainer', () => {
     });
 
     // Act
-    render(<MapContainer />);
+    render(
+      <DirectionsProvider>
+        <MapContainer />
+      </DirectionsProvider>
+    );
 
     // Assert
     await waitFor(() => {
@@ -60,7 +71,11 @@ describe('MapContainer', () => {
     );
 
     // Act
-    render(<MapContainer />);
+    render(
+      <DirectionsProvider>
+        <MapContainer />
+      </DirectionsProvider>
+    );
 
     // Assert
     await waitFor(() => {
@@ -76,7 +91,11 @@ describe('MapContainer', () => {
     fetchSpy.mockResolvedValueOnce({ apiKey: 'test-key' });
 
     // Act
-    render(<MapContainer />);
+    render(
+      <DirectionsProvider>
+        <MapContainer />
+      </DirectionsProvider>
+    );
 
     // Wait for error to appear
     await waitFor(() => {
@@ -100,7 +119,11 @@ describe('MapContainer', () => {
     });
 
     // Act
-    const { unmount } = render(<MapContainer />);
+    const { unmount } = render(
+      <DirectionsProvider>
+        <MapContainer />
+      </DirectionsProvider>
+    );
 
     await waitFor(() => {
       expect(screen.getByTestId('map')).toBeInTheDocument();

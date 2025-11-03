@@ -2,10 +2,8 @@
  * Geolocation service for detecting user location
  */
 
-import {
+import type {
   UserLocation,
-  Location,
-  GeolocationStatus,
   GeolocationErrorType,
 } from '../types/directions';
 

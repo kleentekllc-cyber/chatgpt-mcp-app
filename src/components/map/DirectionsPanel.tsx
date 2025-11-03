@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Route, TravelMode, DirectionStep, ManeuverType } from '../../types/directions';
+import type { Route, TravelMode, ManeuverType } from '../../types/directions';
 import { TransportModeSelector } from './TransportModeSelector';
 
 export interface DirectionsPanelProps {
@@ -21,7 +21,7 @@ export interface DirectionsPanelProps {
 /**
  * Get maneuver icon for a direction step
  */
-function getManeuverIcon(maneuver?: ManeuverType): JSX.Element {
+function getManeuverIcon(maneuver?: ManeuverType): React.ReactElement {
   const className = "w-5 h-5 flex-shrink-0";
 
   if (!maneuver || maneuver === 'straight') {
@@ -67,15 +67,6 @@ function getManeuverIcon(maneuver?: ManeuverType): JSX.Element {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
     </svg>
   );
-}
-
-/**
- * Remove HTML tags from instruction text
- */
-function stripHtml(html: string): string {
-  const div = document.createElement('div');
-  div.innerHTML = html;
-  return div.textContent || div.innerText || '';
 }
 
 export const DirectionsPanel: React.FC<DirectionsPanelProps> = ({
